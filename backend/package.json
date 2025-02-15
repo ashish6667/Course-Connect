@@ -1,0 +1,24 @@
+{
+  "name": "course-app",
+  "version": "1.0.0",
+  "description": "full stack course-selling-app",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "keywords": [
+    "course-app"
+  ],
+  "author": "Ashish",
+  "license": "ISC",
+  "dependencies": {
+    "cloudinary": "^2.5.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-fileupload": "^1.5.1",
+    "mongoose": "^8.10.0",
+    "nodemon": "^3.1.9"
+  }
+}
