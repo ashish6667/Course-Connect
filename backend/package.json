@@ -14,11 +14,15 @@
   "author": "Ashish",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.0",
     "cloudinary": "^2.5.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-fileupload": "^1.5.1",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.10.0",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "zod": "^3.24.2"
   }
 }
