@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 import config from "../config.js";
+import { Purchase } from "../models/purchase.model.js";
+import { Course } from "../models/course.model.js";
 export const signup = async(req, res) => {
     const { firstName, lastName, email , password } = req.body;
     
@@ -16,7 +18,7 @@ export const signup = async(req, res) => {
         email: z.string().email(),
         password: z
         .string()
-        .min(6, {message:"password must be atleast 6 char long"})
+        .min(6, {message:"password must be atleast 6 char long"}),
     });
      
     const validateData = userSchema.safeParse(req.body);
@@ -49,7 +51,8 @@ export const signup = async(req, res) => {
 
 export const login = async (req, res) => { 
     const {email, password } = req.body;
- try{ const user = await User.findOne({ email: email});
+ try{ 
+    const user = await User.findOne({ email: email});
       const isPasswordCorrect = await bcrypt.compare(password, user.password); 
 
       if(!user || !isPasswordCorrect ) { 
@@ -62,9 +65,16 @@ export const login = async (req, res) => {
         id: user._id,
         
  },
-  config.JWT_USER_PASSWORD    
+  config.JWT_USER_PASSWORD,
+  { expiresIn: "1d" }    
 );
-    res.cookie("jwt", token);  
+const cookieOptions={
+    expires: new Date(Date.now() + 24*60 * 60 * 1000), // 1 day
+    httpOnly: true, // can't be accesed via js directly
+    secure: process.env.NODE_ENV === "production", // true for https only
+    sameSite:"Strict"  // CSRF attack
+};
+    res.cookie("jwt", token,cookieOptions);  
     res.status(201).json({ message: "Login successful", user, token}); 
 } catch (error) { 
     res.status(500).json({ errors: "Error in login"});
@@ -72,12 +82,37 @@ export const login = async (req, res) => {
      }
  };
 
- export const logout=(req, res) => {
-   try {
-    res.clearCookie("jwt");
-    res.status(200).json({ message: "Logged out successfully"});
- } catch(error){
-    res.status(500).json({ message: "Logged out successfully"});
-    console.log("Error in logout", error);
- }
+ export const logout = (req, res) => {
+    try {
+     res.clearCookie("jwt");
+     res.status(200).json({ message: "Logged out successfully"});
+  } catch(error){
+     res.status(500).json({ errors: "Error in logout" });
+     console.log("Error in logout", error);
+  }
+ };
+
+export const purchases =async (req, res) => {
+    const userId = req.userId;
+
+    try{
+        const purchased = await Purchase.find({userId})
+
+        let purchasedCourseId=[]
+
+        for(let i=0; i<purchased.length; i++){
+
+             purchasedCourseId.push(purchased[i].courseId)
+
+         }
+             const courseData = await Course.find({
+                _id:{$in:purchasedCourseId},
+             });
+        
+
+        res.status(200).json({ purchased, courseData });
+    } catch (error) {
+        res.status(500).json({ errors: "Error in purchased" });
+        console.log("Error in purchase", error);
+    }
 };

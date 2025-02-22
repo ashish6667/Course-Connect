@@ -3,13 +3,13 @@ import mongoose from "mongoose";
 const purchaseSchema = new mongoose.Schema({
       userId:{
         type: mongoose.Types.ObjectId,
-        ref:"User"
+        ref:"User",
       },
       courseId:{
         type:mongoose.Types.ObjectId,
-        ref:"Course"
-      }             
+        ref:"Course",
+      },           
     
 });
 
-export const User = mongoose.model("Purchase", purchaseSchema);
+export const Purchase = mongoose.model("Purchase", purchaseSchema);

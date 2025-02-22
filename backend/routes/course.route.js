@@ -6,16 +6,19 @@ import {
          deleteCourse ,
          getCourses, 
          updateCourse,
- } from "../controllers/course.controller.js";
+        } from "../controllers/course.controller.js";
  import userMiddleware from "../middlewares/user.mid.js";
-const router=express.Router();
+ import adminMiddleware from "../middlewares/admin.mid.js";
 
-router.post("/create",createCourse);
-router.put("/update/:courseId",updateCourse);
-router.delete("/delete/:courseId", deleteCourse);
+const router = express.Router();
+
+router.post("/create", adminMiddleware, createCourse);
+router.put("/update/:courseId", adminMiddleware,updateCourse);
+router.delete("/delete/:courseId", adminMiddleware, deleteCourse);
+
 router.get("/courses" ,getCourses);
 router.get("/:courseId", courseDetails);
 
-router.post("/buy/:courseId",userMiddleware,buyCourses)
+router.post("/buy/:courseId",userMiddleware,buyCourses);
 
 export default router;
